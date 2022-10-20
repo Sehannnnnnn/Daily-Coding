@@ -11,7 +11,6 @@
 // 3개 이상 연속되는 문자만 압축합니다.
 
 function compressString(str) {
-    // TODO: 여기에 코드를 작성합니다.
     let output = ""
     let count = 1;
     let arr = str.split('');
