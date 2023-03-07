@@ -12,6 +12,7 @@ function solution(cap, n, deliveries, pickups) {
       }
       answer += point;
       let d_boxes = 0; let p_boxes = 0;
+      
       //배달 보내기
       while(d_boxes < cap) {
         if (deliveries.length == 0) break;
@@ -42,5 +43,5 @@ function solution(cap, n, deliveries, pickups) {
   }
   
   
-  solution(4,	5, [0],	[0])
+  solution(4, 5, [0],	[0])
   
