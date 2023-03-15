@@ -3,7 +3,7 @@ function solution(maps) {
     let start = [];
     let exit = [];
     let lever = [];
-    //출발점과 
+    //start, lever, exit 좌표 구하기
     for (let i = 0; i<maps.length; i++) {
     
       let line = maps[i].split('');
@@ -19,31 +19,51 @@ function solution(maps) {
       maps[i] = line;
     }
     
-    console.log(start, exit, lever);
-    
+    //방문 기록용 2차원 배열 생성
+    let visit = Array.from({length: height}, () => Array.from({length: width}, () => true));
     const movement = [[0,1], [1,0], [-1,0], [0,-1]];
-    const step = []
-    
-    function findWay(now, arrive, board, step) {
-        console.log(now, step, board);
-        step ++;
-        board[now[1]][now[0]] = 'X'
+
+    //BFS 방식 탐색
+    function findWay(nows, arrive, board, step) {
         let nexts = [];
-        movement.forEach((move) => {
-            let next = [now[0] + move[0], now[1] + move[1]];
-            if (next[0] >= 0 && next[0] < width && next[1] >= 0 && next[1] < height && board[next[1]][next[0]] !== 'X') {
-                nexts.push(next);
+        for (let now of nows) {
+            if (now[0] == arrive[0] && now[1] == arrive[1]) {
+                return {arrives: true, step: step};
             }
-        })
-        nexts.forEach((next) => {
-            if (next[0] == arrive[0] && next[1] == arrive[1]) {
-                console.log('도착!')
-                return step;
-            }
-            findWay(next, arrive, board, step);
-        })
+            movement.forEach((move) => {
+                let next = [now[0] + move[0], now[1] + move[1]];
+                //맵 내에 있는 좌표이면서
+                if ((next[0] >= 0 && next[0] < width) && (next[1] >= 0 && next[1] < height)) {
+                    //방문한적 없고 벽이 아닐때
+                    if (board[next[1]][next[0]] !== 'X' && visit[next[1]][next[0]]){
+                        //방문 처리
+                        visit[[next[1]]][next[0]] = false;
+                        nexts.push(next);
+                    }
+                }
+            })
+        }
+        if (nexts.length === 0) return {arrives: false, step: -1};
+        // 재귀호출
+        return findWay(nexts, arrive, board, step+1);
     }
-    findWay(start, lever, maps, 0)
+
+    //레버찾기
+    visit[start[1]][start[0]] == false;
+    const findLever = findWay([start], lever, maps, 0);
+    //레버 못찾으면
+    if (!findLever.arrives) return -1;
+    //방문 기록 배열 초기화
+    visit = Array.from({length: height}, () => Array.from({length: width}, () => true));
+
+    //출구 찾기
+    visit[lever[1]][lever[0]] == false;
+    const findExit = findWay([lever], exit, maps, 0);
+
+    if (!findExit.arrives) {
+        return -1;
+    }
+    else {return findLever.step + findExit.step};
   }
   
-  solution(["SOOOL","XXXXO","OOOOO","OXXXX","OOOOE"]);
+  console.log(solution(["SOOOL","XXXXO","OOOOO","OXXXX","OOOOE"]));
