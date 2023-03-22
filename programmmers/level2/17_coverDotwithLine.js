@@ -47,7 +47,6 @@ function solution(dots, lines) {
         }
         return false;
     }
-
     return -1;
 }
 
